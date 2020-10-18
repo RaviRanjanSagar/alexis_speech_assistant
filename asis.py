@@ -15,6 +15,8 @@ import pyttsx3
 import bs4 as bs
 import urllib.request
 import requests
+import smtplib      #pip install smtlip 
+
 
 class person:
     name = ''
@@ -37,6 +39,38 @@ def engine_speak(text):
     text = str(text)
     engine.say(text)
     engine.runAndWait()
+
+######::::> N_O_T_E : firstly you have to signup on Fast2SMS and verify your credential to get DEV API and 
+     ## do copy paste the following requiredment from there . FAST2SMS is free for certain messages with some credit points
+def TextMsg(number,message):
+    url="#___url__link"                                      # paste from dev API option of FAST2SMS
+    parameters ={
+        'authorization':"a_u_t_h_o_r_i_z_a_t_i_o_n  from dev Api ", # paste from dev API option of FAST2SMS
+        'sender_id':'FSTSMS',                               # paste from dev API option of FAST2SMS
+        'message':message,  
+        'language':'english',                               # paste from dev API option of FAST2SMS
+        'route':'p',                                        # paste from dev API option of FAST2SMS
+        'numbers':number
+    }
+    response = requests.get(url,params=parameters)
+    response.json()
+
+    TextMsg(number,message) 
+    engine_speak('Message has been sent sir. Any other help')
+    time.sleep(1)
+
+###::> Email
+def dropEmail(to , content):
+    server = smtplib.SMTP('smtp.gmail.com',port=587)                     # port n0 =587 for public connection
+    server.ehlo()                                                        #connecting my_server to Gmail server
+    server.starttls()                                                    # Estabilishing S_E_C_U_R_E_D  C_O_N_N_E_C_T_I_O_N
+    #### L_O_G_I_N credential of gmail
+    server.login(user='Y_O_U_R EMAIL ID',password='YOUR PASSWORD')       #Logining with account
+    server.sendmail('TARGET E_M_A_I_L ID',to,content)                    #sending msg to target_id
+    server.close()                                                       #C_L_O_S_S_I_N_G connection safely
+
+
+
 
 r = sr.Recognizer() # initialise a recogniser
 # listen for audio and convert it to text:
@@ -243,6 +277,45 @@ def respond(voice_data):
         url = "https://www.google.com/maps/search/Where+am+I+?/"
         webbrowser.get().open(url)
         engine_speak("You must be somewhere near here, as per Google maps")    
+
+    #:::> send a text message ( on phone)
+    ######::::> N_O_T_E : firstly you have to signup on Fast2SMS and verify your credential to get DEV API and 
+    ## do copy paste the following requiredment from there . FAST2SMS is free for certain messages with some credit points
+    elif there_exists(['send text message','text message']):
+        engine_speak('To whom sir')
+        ask = record_audio().lower()
+        if "name_1" in ask:
+            put_num = '1234567890'      #fake number    :: provid a valid number here
+            engine_speak('what should i send sir')
+            put_msg = record_audio()  # to record message 
+            TextMsg(number=put_num,message=put_msg) 
+        elif "name_2" in ask:
+            pass
+
+    # to use this functionality , firstly you have to make a little change open your account , goto setting and 
+    # from security option choose 'LESS SECURE' 
+    elif there_exists(['send email', 'drop email','make a email','mail','draft mail']):
+            engine_speak('what should i say in mail')
+            content = record_audio()
+            to='abc@gmail.com  '        # provid valid email
+            dropEmail(to , content)
+            if dropEmail:
+                engine_speak('Email has been sent sir')
+                
+
+    #:::> to automatically shutdown pc
+    elif there_exists(['shut down','pc off']):
+        engine_speak('just confirm for shutdown yes/no')
+        confirmation = record_audio()
+        str(confirmation).lower()
+        if (confirmation=='yes'):
+            engine_speak('shutdown Confirmed. Closing system...')
+            os.system('shutdown-s')
+        else:
+            engine_speak('confirmation denied')
+            
+        
+            
 
 
 
